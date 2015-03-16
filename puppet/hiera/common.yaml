@@ -8,7 +8,7 @@ profile::rihanna::server::banana_host: "%{::ipaddress_eth1}"
 riak::service_manage: true
 riak::riak_conf:
   ring_size:
-    value: 64
+    value: 8
   search:
     value: "on"
   nodename:
@@ -21,3 +21,9 @@ riak::riak_conf:
     ensure: absent
   listener.protobuf.all:
     value: '0.0.0.0:8087'
+  buckets.default.n_val:
+    value: 1
+  buckets.default.last_write_wins:
+    value: true
+  buckets.default.allow_mult:
+    value: false

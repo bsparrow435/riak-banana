@@ -1,5 +1,5 @@
 input {
-  syslog { port => 5140 }
+  file { path => ["/tmp/console.log"] }
 }
 output {
   riak {
