@@ -1,6 +1,12 @@
 input {
   file { path => ["/tmp/console.log"] }
 }
+filter {
+  grok {
+    match => { "message" => "%{LAGER_TIMESTAMP:timestamp} \[%{LOGLEVEL}\] %{GREEDYDATA:erl_pid}@%{ERL_MOD_FUN_LINE:erl_modfun} %{GREEDYDATA:log_message}" }
+    patterns_dir => ["etc/logstash/patterns/grok"]
+  }
+}
 output {
   riak {
     bucket => ["logstash_logs"]

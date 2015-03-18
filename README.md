@@ -1,4 +1,4 @@
-riak-banana
+NAME UNKNOWN
 ===========
 
 Riak2.0 + LucidWorks/banana
@@ -19,6 +19,8 @@ Riak2.0 + LucidWorks/banana
 - ~~hitting local solr instead of Riak solr query interface, due to Banana requesting Solr Admin API calls~~
 
 #### Notes
+The
+
 The goal is to hook in LucidWorks/banana into Riak2.0's solr interface, use Riak to store dashboards, etc, and riak to submit log data.
 
 Currently Functional, needs cleaning/testing
