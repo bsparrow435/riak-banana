@@ -1,3 +1,3 @@
 class role::rihanna {
-    include profile::rihanna::server
+    include profile::rihanna::banana
 }

@@ -1,4 +1,4 @@
-class profile::rihanna::server (
+class profile::rihanna::banana (
 	$banana_host = localhost
 ) inherits profile::base {
 
@@ -22,6 +22,20 @@ class profile::rihanna::server (
   class { '::riakbanana':
 		banana_host => $banana_host,
 		stage => riakbanana
+	}
+
+	class { '::logstash':
+		manage_repo => true,
+		repo_version => '1.4'
+	}
+
+	class { '::logstash_contrib':
+		require => Package['logstash']
+	}
+
+	logstash::configfile { 'logstash-riak':
+		content => template('profile/logstash-riak.erb'),
+		notify => Service['logstash']
 	}
 
 }
