@@ -25,10 +25,10 @@
    <field name="id" type="string" indexed="true" stored="true" multiValued="false"/>
 
    <!-- static log analysis indexes -->
-   <field name="message" type="text_general" indexed="true" stored="true" multiValued="false"/>
+   <!-- <field name="message" type="text_general" indexed="true" stored="true" multiValued="false"/> -->
    <field name="log_message" type="text_general" indexed="true" stored="true" multiValued="false"/>
-   <field name="@timestamp" type="date" indexed="true" stored="true" multiValued="false"/>
-   <field name="timestamp" type="string" indexed="true" stored="true" multiValued="false"/>
+   <!-- <field name="@timestamp" type="date" indexed="true" stored="true" multiValued="false"/> -->
+   <field name="timestamp" type="date" indexed="true" stored="true" multiValued="false"/>
    <field name="loglevel" type="string" indexed="true" stored="true" multiValued="false"/>
    <field name="erl_pid" type="string" indexed="true" stored="true" multiValued="false"/>
    <field name="erl_modfun" type="string" indexed="true" stored="true" multiValued="false"/>

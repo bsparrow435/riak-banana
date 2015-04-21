@@ -1,5 +1,5 @@
 {
-  "title": "Basic Dashboard With Pointers",
+  "title": "Console.log POC",
   "services": {
     "query": {
       "idQueue": [
@@ -24,62 +24,49 @@
     },
     "filter": {
       "idQueue": [
-        1,
-        2
+        2,
+        3
       ],
       "list": {
         "0": {
-          "from": "2014-06-26T07:05:04.846Z",
-          "to": "2014-06-26T07:20:04.846Z",
-          "field": "@timestamp",
+          "from": "NOW/YEAR-5YEAR",
+          "to": "NOW/YEAR%2B1YEAR",
+          "field": "timestamp",
           "type": "time",
+          "fromDateObj": "2010-04-21T07:14:15.667Z",
+          "toDateObj": "2015-04-21T07:14:15.668Z",
           "mandate": "must",
           "active": true,
           "alias": "",
           "id": 0
+        },
+        "1": {
+          "type": "field",
+          "field": "module",
+          "query": "(%22riak_kv_entropy_manager%22)",
+          "mandate": "mustNot",
+          "active": true,
+          "alias": "",
+          "id": 1
+        },
+        "4": {
+          "type": "field",
+          "field": "module",
+          "query": "(%22riak_kv_exchange_fsm%22)",
+          "mandate": "mustNot",
+          "active": true,
+          "alias": "",
+          "id": 4
         }
       },
       "ids": [
-        0
+        4,
+        0,
+        1
       ]
     }
   },
   "rows": [
-    {
-      "title": "Overview",
-      "height": "50px",
-      "editable": true,
-      "collapse": false,
-      "collapsable": true,
-      "panels": [
-        {
-          "error": false,
-          "span": 6,
-          "editable": true,
-          "type": "text",
-          "loadingEditor": false,
-          "status": "Stable",
-          "mode": "markdown",
-          "content": "You may be seeing a message that says Solr is not reachable or that the collection is not found. Click on _Configure Dashboard_ (cog icon) on the top right and set the Solr server and collection. By default, we have configured the dashboard to point to server _http://localhost:8093_ and collection _logstash_logs_. You can also choose how many rows you want to have in the dashboard. \n\nTo configure what panels appear in a specific row, click on the _Configure Row_  (cog icon) at the far left of the row.\n\nEach panel can be configured by clicking on _Configure_ (cog icon) near the top right of the panel (just to the left of the panel type). The span of the panel determines its width; each row has width 12, and each panel can take up all or part of this span.\n\nAfter reading these _text panels_ (which are useful for presenting information about a dashboard), you can delete them by clicking on the \"x\" towards the top right of the panel.",
-          "style": {},
-          "title": "Configure Dashboard"
-        },
-        {
-          "error": false,
-          "span": 6,
-          "editable": true,
-          "group": [
-            "default"
-          ],
-          "type": "text",
-          "status": "Stable",
-          "mode": "markdown",
-          "content": "In the row below, we have put in a _time picker_ and a _search bar._ Banana is primarily designed for time series data, and we expect every dashboard to have a time picker. You will also almost always have a search bar for user searches. \n\nBelow that there is a hidden row that contains a _filtering_ module, which is used to configure global filter queries. You will almost certainly want to have one. Clicking on any facet in the terms module will filter results by that value. You can modify each filter once it is created; you can change the value and/or choose between \"must\", \"must not\" and \"either.\"\n\nClick on the right-facing triangle to the far left of the row to _Expand Row_. You can click on the upward-facing triangle on any row in order to _Hide Row._",
-          "style": {},
-          "title": "Timestamps, Queries and Filters"
-        }
-      ]
-    },
     {
       "title": "Query and Time Window",
       "height": "50px",
@@ -94,7 +81,7 @@
           "type": "timepicker",
           "loadingEditor": false,
           "status": "Stable",
-          "mode": "relative",
+          "mode": "absolute",
           "time_options": [
             "5m",
             "15m",
@@ -109,8 +96,8 @@
             "1y",
             "5y"
           ],
-          "timespan": "15m",
-          "timefield": "@timestamp",
+          "timespan": "5y",
+          "timefield": "timestamp",
           "timeformat": "",
           "refresh": {
             "enable": false,
@@ -118,7 +105,12 @@
             "min": 3
           },
           "filter_id": 0,
-          "title": "Time Window"
+          "title": "Time Window",
+          "spyable": true,
+          "time": {
+            "from": "04/21/2010 03:14:15",
+            "to": "04/21/2015 03:14:15"
+          }
         },
         {
           "error": false,
@@ -136,31 +128,14 @@
           "pinned": true,
           "query": "*",
           "title": "Search",
-          "def_type": ""
+          "def_type": "",
+          "spyable": true
         }
       ]
     },
     {
       "title": "Filters",
       "height": "50px",
-      "editable": true,
-      "collapse": true,
-      "collapsable": true,
-      "panels": [
-        {
-          "error": false,
-          "span": 12,
-          "editable": true,
-          "group": [
-            "default"
-          ],
-          "type": "filtering"
-        }
-      ]
-    },
-    {
-      "title": "Facets, Histogram and Table",
-      "height": "150px",
       "editable": true,
       "collapse": false,
       "collapsable": true,
@@ -172,12 +147,8 @@
           "group": [
             "default"
           ],
-          "type": "text",
-          "status": "Stable",
-          "mode": "markdown",
-          "content": "Without knowing about your data, I cannot fully configure the panels I have provided below. However, I have provided you with some starting points, assuming that your time field is \"event_timestamp\" and that there is a field called \"message\" that you wish to facet on in order to view the top terms that appear in the \"message\" field and their frequency. If there is no data, these panels will be empty, and may give an error.\n\nThe _histogram_ panel allows you to plot either _counts_ or a specific field's (integer) _values_ across time. If you go to  _Configure_, the panel allows you to set the type of chart and what variable is plotted (if choosing the _values_ option). Moreover, when plotting values, you can specify a _group by_ field which will produce multiple charts. You can modify the time window for the entire page from within the histogram panel.\n\nThe _terms_ panel is great for visualizing facets--as pie charts, bar charts or tables. Clicking on a term will create a global filter query restricting the result set (across all panels within the page) to the field value that is selected. You could have many such panels depending on the number of fields you choose to facet on.\n\nThe *table* panel at the bottom provides you a detailed view of search results. It has attempted to list your fields to the left; select a few to view them in the table. You can sort by any field. Click on a particular row to expand the resulting document that was returned.",
-          "style": {},
-          "title": "Facets, Histogram and Table"
+          "type": "filtering",
+          "spyable": true
         }
       ]
     },
@@ -191,97 +162,145 @@
         {
           "span": 6,
           "editable": true,
-          "type": "histogram",
+          "type": "tagcloud",
           "loadingEditor": false,
-          "mode": "count",
-          "time_field": "@timestamp",
           "queries": {
             "mode": "all",
             "ids": [
               0
             ],
-            "query": "q=*&df=message&wt=json&rows=0&fq=@timestamp:[2014-06-26T07:05:04.846Z%20TO%202014-06-26T07:20:04.846Z]&facet=true&facet.range=@timestamp&facet.range.start=2014-06-26T07:05:04.846Z/DAY&facet.range.end=2014-06-26T07:20:04.846Z%2B1DAY/DAY&facet.range.gap=%2B10SECOND",
+            "query": "q=*&df=timestamp&wt=json&rows=0&fq=timestamp:[NOW/YEAR-5YEAR%20TO%20NOW/YEAR%2B1YEAR]&fq=-module:(%22riak_kv_entropy_manager%22)&fq=-module:(%22riak_kv_exchange_fsm%22)&facet=true&facet.field=module&facet.limit=10",
             "custom": ""
           },
-          "max_rows": 100000,
-          "value_field": null,
-          "group_field": null,
-          "auto_int": true,
-          "resolution": 100,
-          "interval": "10s",
-          "intervals": [
-            "auto",
-            "1s",
-            "1m",
-            "5m",
-            "10m",
-            "30m",
-            "1h",
-            "3h",
-            "12h",
-            "1d",
-            "1w",
-            "1M",
-            "1y"
-          ],
-          "fill": 0,
-          "linewidth": 3,
-          "timezone": "browser",
+          "field": "module",
+          "size": 10,
+          "alignment": "vertical and horizontal",
+          "fontScale": 1,
           "spyable": true,
-          "zoomlinks": true,
-          "bars": true,
-          "stack": true,
-          "points": false,
-          "lines": false,
-          "legend": true,
-          "x-axis": true,
-          "y-axis": true,
-          "percentage": false,
-          "interactive": true,
-          "options": true,
-          "tooltip": {
-            "value_type": "cumulative",
-            "query_as_alias": false
-          },
-          "title": "Event Counts",
-          "lines_smooth": false
+          "show_queries": true,
+          "title": "Common Modules"
         },
         {
-          "error": false,
           "span": 6,
           "editable": true,
-          "group": [
-            "default"
-          ],
-          "type": "terms",
+          "type": "tagcloud",
+          "loadingEditor": false,
           "queries": {
             "mode": "all",
             "ids": [
               0
             ],
-            "query": "q=*&df=message&wt=json&rows=0&fq=@timestamp:[2014-06-26T07:05:04.846Z%20TO%202014-06-26T07:20:04.846Z]&facet=true&facet.field=message&facet.limit=100"
+            "query": "q=*&df=timestamp&wt=json&rows=0&fq=timestamp:[NOW/YEAR-5YEAR%20TO%20NOW/YEAR%2B1YEAR]&fq=-module:(%22riak_kv_entropy_manager%22)&fq=-module:(%22riak_kv_exchange_fsm%22)&facet=true&facet.field=erl_pid&facet.limit=10",
+            "custom": ""
           },
-          "field": "message",
-          "exclude": [],
-          "missing": false,
-          "other": false,
-          "size": 100,
-          "order": "count",
-          "style": {
-            "font-size": "10pt"
-          },
-          "donut": true,
-          "tilt": true,
-          "labels": false,
-          "arrangement": "horizontal",
-          "chart": "pie",
-          "counter_pos": "none",
-          "title": "Message Terms",
+          "field": "erl_pid",
+          "size": 10,
+          "alignment": "vertical and horizontal",
+          "fontScale": 1,
           "spyable": true,
-          "time_field": "event_timestamp",
-          "mode": "count",
-          "stats_field": "",
-          "decimal_points": 0
+          "show_queries": true,
+          "title": "Common Pids"
+        }
+      ]
+    },
+    {
+      "title": "Moar Graphs",
+      "height": "150px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "span": 6,
+          "editable": true,
+          "type": "fullTextSearch",
+          "loadingEditor": false,
+          "status": "Stable",
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=*&df=timestamp&fq=timestamp:[NOW/YEAR-5YEAR%20TO%20NOW/YEAR%2B1YEAR]&fq=-module:(%22riak_kv_entropy_manager%22)&fq=-module:(%22riak_kv_exchange_fsm%22)&facet=true&facet.field=log_message&facet.field=erl_pid&wt=json&rows=5000&hl=true&hl.fl=erl_pid",
+            "basic_query": "q=*&df=timestamp&fq=timestamp:[NOW/YEAR-5YEAR%20TO%20NOW/YEAR%2B1YEAR]&fq=-module:(%22riak_kv_entropy_manager%22)&fq=-module:(%22riak_kv_exchange_fsm%22)&facet=true&facet.field=log_message&facet.field=erl_pid",
+            "custom": ""
+          },
+          "size": 10,
+          "pages": 500,
+          "offset": 0,
+          "group": "default",
+          "sort": [],
+          "style": {
+            "font-size": "9pt"
+          },
+          "overflow": "min-height",
+          "fields": [
+            "log_message",
+            "erl_pid"
+          ],
+          "highlight": [],
+          "sortable": false,
+          "header": true,
+          "paging": true,
+          "field_list": true,
+          "trimFactor": 300,
+          "normTimes": true,
+          "spyable": true,
+          "saveOption": "json",
+          "exportSize": 5000,
+          "exportAll": true,
+          "facet_limit": 10,
+          "foundResults": true,
+          "show_queries": true,
+          "title": "Log Search",
+          "header_field": "module",
+          "body_field": "erl_pid"
+        },
+        {
+          "span": 6,
+          "editable": true,
+          "type": "fullTextSearch",
+          "loadingEditor": false,
+          "status": "Stable",
+          "queries": {
+            "mode": "all",
+            "ids": [
+              0
+            ],
+            "query": "q=*&df=timestamp&fq=timestamp:[NOW/YEAR-5YEAR%20TO%20NOW/YEAR%2B1YEAR]&fq=-module:(%22riak_kv_entropy_manager%22)&fq=-module:(%22riak_kv_exchange_fsm%22)&facet=true&facet.field=module&facet.field=function&wt=json&rows=5000&hl=true&hl.fl=log_message",
+            "basic_query": "q=*&df=timestamp&fq=timestamp:[NOW/YEAR-5YEAR%20TO%20NOW/YEAR%2B1YEAR]&fq=-module:(%22riak_kv_entropy_manager%22)&fq=-module:(%22riak_kv_exchange_fsm%22)&facet=true&facet.field=module&facet.field=function",
+            "custom": ""
+          },
+          "size": 10,
+          "pages": 500,
+          "offset": 0,
+          "group": "default",
+          "sort": [],
+          "style": {
+            "font-size": "9pt"
+          },
+          "overflow": "min-height",
+          "fields": [
+            "module",
+            "function"
+          ],
+          "highlight": [],
+          "sortable": false,
+          "header": true,
+          "paging": true,
+          "field_list": true,
+          "trimFactor": 300,
+          "normTimes": true,
+          "spyable": true,
+          "saveOption": "json",
+          "exportSize": 5000,
+          "exportAll": true,
+          "facet_limit": 10,
+          "foundResults": true,
+          "show_queries": true,
+          "title": "Mod/Fun Search",
+          "header_field": "erl_modfun",
+          "body_field": "log_message"
         }
       ]
     },
@@ -293,15 +312,14 @@
       "collapsable": true,
       "panels": [
         {
-          "error": false,
           "span": 12,
           "editable": true,
           "group": [
             "default"
           ],
           "type": "table",
-          "size": 100,
-          "pages": 5,
+          "size": 500,
+          "pages": 50,
           "offset": 0,
           "sort": [
             "id",
@@ -312,7 +330,10 @@
           },
           "overflow": "min-height",
           "fields": [
-            "message"
+            "timestamp",
+            "erl_pid",
+            "erl_modfun",
+            "log_message"
           ],
           "highlight": [],
           "sortable": true,
@@ -324,8 +345,8 @@
             "ids": [
               0
             ],
-            "query": "q=*&df=message&fq=@timestamp:[2014-06-26T07:05:04.846Z%20TO%202014-06-26T07:20:04.846Z]&sort=id desc&wt=json&rows=500",
-            "basic_query": "q=*&df=message&fq=@timestamp:[2014-06-26T07:05:04.846Z%20TO%202014-06-26T07:20:04.846Z]&sort=id desc"
+            "query": "q=*&df=timestamp&fq=timestamp:[NOW/YEAR-5YEAR%20TO%20NOW/YEAR%2B1YEAR]&fq=-module:(%22riak_kv_entropy_manager%22)&fq=-module:(%22riak_kv_exchange_fsm%22)&sort=id desc&wt=json&rows=25000",
+            "basic_query": "q=*&df=timestamp&fq=timestamp:[NOW/YEAR-5YEAR%20TO%20NOW/YEAR%2B1YEAR]&fq=-module:(%22riak_kv_entropy_manager%22)&fq=-module:(%22riak_kv_exchange_fsm%22)&sort=id desc"
           },
           "field_list": true,
           "status": "Stable",
@@ -334,8 +355,30 @@
           "title": "Events",
           "time_field": "event_timestamp",
           "saveOption": "json",
-          "exportSize": 500,
-          "exportAll": true
+          "exportSize": 500000,
+          "exportAll": true,
+          "important_fields": [
+            "_yz_ed",
+            "_yz_fpn",
+            "_yz_id",
+            "_yz_pn",
+            "_yz_rb",
+            "_yz_rk",
+            "_yz_rt",
+            "erl_modfun",
+            "erl_pid",
+            "function",
+            "host",
+            "lineno",
+            "log_message",
+            "module",
+            "timestamp"
+          ],
+          "displayLinkIcon": true,
+          "imageFields": [],
+          "imgFieldWidth": "auto",
+          "imgFieldHeight": "85px",
+          "show_queries": true
         }
       ]
     }
@@ -346,7 +389,7 @@
     "pattern": "[logstash-]YYYY.MM.DD",
     "default": "_all"
   },
-  "style": "light",
+  "style": "dark",
   "failover": false,
   "panel_hints": true,
   "loader": {
@@ -365,12 +408,11 @@
     "dropdown_collections": false
   },
   "solr": {
-    "server": "http://<%= @banana_host %>:<%= @banana_port %>/solr/",
-    "core_name": "<%= @index %>",
+    "server": "http://10.42.0.6:80/solr/",
+    "core_name": "logstash_logs",
     "core_list": [
-      "banana-int",
-      "<%= @index %>"
+      "logstash_logs"
     ],
-    "global_params": "&df=message"
+    "global_params": "&df=timestamp"
   }
 }

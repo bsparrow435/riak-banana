@@ -3,12 +3,16 @@ input {
 }
 filter {
   grok {
-    match => { "message" => "%{LAGER_TIMESTAMP:timestamp} \[%{LOGLEVEL}\] %{GREEDYDATA:erl_pid}@%{ERL_MOD_FUN_LINE:erl_modfun} %{GREEDYDATA:log_message}" }
+  	patterns_dir => ["/tmp/logstash","/opt/logstash/patterns"]
+    match => { "message" => "%{YEAR:year}-%{MONTHNUM:monthnum}-%{MONTHDAY:monthday} %{TIME:time} \[%{LOGLEVEL}\] %{GREEDYDATA:erl_pid}@%{ERL_MOD_FUN_LINE:erl_modfun} %{GREEDYDATA:log_message}" }
+    remove_field => ["message","date","path","@version","@timestamp","time","year","monthnum","monthday"]
+    add_field => {"timestamp" => "%{year}-%{monthnum}-%{monthday}T%{time}Z"}
   }
 }
 output {
+  stdout { codec => rubydebug }
   riak {
     bucket => ["logstash_logs"]
-    nodes => {"rihanna01" => "8098"}
+    nodes => {"localhost" => "8098"}
   }
 }

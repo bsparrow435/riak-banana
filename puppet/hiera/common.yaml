@@ -13,6 +13,8 @@ riak::riak_conf:
     value: "on"
   nodename:
     value: "riak@%{::fqdn}"
+  anti_entropy:
+    value: "passive"
   listener.http.internal:
     ensure: absent
   listener.http.all:
