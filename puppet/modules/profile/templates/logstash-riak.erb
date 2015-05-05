@@ -20,9 +20,11 @@ filter {
   }
 }
 output {
-  stdout { codec => rubydebug }
-  riak {
-    bucket => ["logstash_logs"]
-    nodes => {"localhost" => "8098"}
+  if [type] == "stats.log" {stdout { codec => rubydebug }}
+  if [type] == "console.log" {
+    riak {
+      bucket => ["logstash_logs"]
+      nodes => {"localhost" => "8098"}
+    }
   }
 }

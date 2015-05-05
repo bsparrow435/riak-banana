@@ -62,6 +62,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |vagrant|
 
       # Toss in some data
       config.vm.provision "shell", inline: "find /vagrant/* -name 'console.log*' -exec cat {} + >> /tmp/console.log"
+      config.vm.provision "shell", inline: "cat /vagrant/stats.log >> /tmp/stats.log"
     end
   end
 end
