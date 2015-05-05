@@ -61,7 +61,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |vagrant|
       config.vm.provision "shell", inline: "puppet apply -l /var/log/puppet/provision.log --modulepath=/opt/puppet/modules --verbose --debug --hiera_config /opt/puppet/hiera.yaml /opt/puppet/manifests/site.pp"
 
       # Toss in some data
-      config.vm.provision "shell", inline: "find /vagrant/ -name 'console.log*' -exec cat {} + >> /tmp/console.log"
+      config.vm.provision "shell", inline: "find /vagrant/* -name 'console.log*' -exec cat {} + >> /tmp/console.log"
     end
   end
 end

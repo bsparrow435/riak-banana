@@ -1,7 +1,6 @@
 class profile::rihanna::banana (
 	$banana_host = localhost
 ) inherits profile::base {
-
 	stage { "pre":
 		before => Stage["riak"]
 	}

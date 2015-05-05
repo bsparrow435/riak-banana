@@ -1,5 +1,5 @@
 class logstash_contrib::params {
-	$logstash_version = '1.4.0'
+	$logstash_version = '1.4.2'
 	$url_base = 'http://download.elasticsearch.org/logstash/logstash'
 	$logstash_dir = '/opt/logstash'
 	$staging_package = '/tmp/logstash-contrib-${logstash_version}.tar.gz'
