@@ -13,12 +13,16 @@ class riakbanana::install inherits riakbanana {
     cwd => "${banana_install_dir}",
     creates => "${banana_install_dir}/banana",
   } ->
-  file { 'banana dashboard':
+  file { 'console dashboard':
     path => "${banana_install_dir}/banana/src/app/dashboards/default.json",
-    content => template("riakbanana/dashboard.json.erb"),
+    content => template("riakbanana/console_dashboard.json.erb"),
     ensure => present
   }
-
+  file { 'stats dashboard':
+    path => "${banana_install_dir}/banana/src/app/dashboards/stats.json",
+    content => template("riakbanana/stats_dashboard.json.erb"),
+    ensure => present
+  }
 ### Nginx
 
   package { 'nginx':
@@ -33,30 +37,56 @@ class riakbanana::install inherits riakbanana {
     ensure => running,
   }
 
-### Riak Solr Schema & Bucket
+### Riak console log Solr Schema & Bucket
 
-  file { 'schema file':
-    path => "/tmp/riakbanana_schema.xml",
-    content => template("riakbanana/riakbanana_schema.xml.erb"),
+  file { 'console schema file':
+    path => "/tmp/console_schema.xml",
+    content => template("riakbanana/console_schema.xml.erb"),
     ensure => present
   } ->
-  exec { 'install schema':
-    command => "curl -XPUT '${riak_url}/search/schema/${index}' -H 'content-type: application/xml' --data-binary @/tmp/riakbanana_schema.xml",
-    unless => "curl '${riak_url}/search/schema/${index}' -f > /dev/null 2>&1",
+  exec { 'install console schema':
+    command => "curl -XPUT '${riak_url}/search/schema/${console_index}' -H 'content-type: application/xml' --data-binary @/tmp/console_schema.xml",
+    unless => "curl '${riak_url}/search/schema/${console_index}' -f > /dev/null 2>&1",
   } ->
-  exec { 'install index':
-    command => "curl -XPUT '${riak_url}/search/index/${index}' -H 'content-type: application/json' -d '{\"schema\":\"${index}\"}'",
-    unless => "curl -s '${riak_url}/search/index/${index}' -f > /dev/null 2>&1",
+  exec { 'install console index':
+    command => "curl -XPUT '${riak_url}/search/index/${console_index}' -H 'content-type: application/json' -d '{\"schema\":\"${console_index}\"}'",
+    unless => "curl -s '${riak_url}/search/index/${console_index}' -f > /dev/null 2>&1",
   } ->
-  exec { 'wait_for_index':
-    command => "curl -f '${riak_url}/search/index/${index}' > /dev/null 2>&1",
+  exec { 'wait_for_index console':
+    command => "curl -f '${riak_url}/search/index/${console_index}' > /dev/null 2>&1",
     tries => 20,
     try_sleep => 5,
   } ->
-  exec { 'configure bucket':
-    command => "curl -H 'content-type: application/json' -XPUT '${riak_url}/buckets/${index}/props' -d '{\"props\":{\"search_index\":\"${index}\"}}'",
-    unless => "curl -s '${riak_url}/buckets/${index}/props' | grep '\"search_index\":\"${index}\"' > /dev/null 2>&1",
-    require => Exec['install index']
+  exec { 'configure console bucket':
+    command => "curl -H 'content-type: application/json' -XPUT '${riak_url}/buckets/${console_index}/props' -d '{\"props\":{\"search_index\":\"${console_index}\"}}'",
+    unless => "curl -s '${riak_url}/buckets/${console_index}/props' | grep '\"search_index\":\"${console_index}\"' > /dev/null 2>&1",
+    require => Exec['install console index']
+  }
+
+### Riak stats log Solr Schema and Bucket
+
+  file { 'stats schema file':
+    path => "/tmp/stats_schema.xml",
+    content => template("riakbanana/stats_schema.xml.erb"),
+    ensure => present
+  } ->
+  exec { 'install stats schema':
+    command => "curl -XPUT '${riak_url}/search/schema/${stats_index}' -H 'content-type: application/xml' --data-binary @/tmp/stats_schema.xml",
+    unless => "curl '${riak_url}/search/schema/${stats_index}' -f > /dev/null 2>&1",
+  } ->
+  exec { 'install stats index':
+    command => "curl -XPUT '${riak_url}/search/index/${stats_index}' -H 'content-type: application/json' -d '{\"schema\":\"${stats_index}\"}'",
+    unless => "curl -s '${riak_url}/search/index/${stats_index}' -f > /dev/null 2>&1",
+  } ->
+  exec { 'wait_for_index stats':
+    command => "curl -f '${riak_url}/search/index/${stats_index}' > /dev/null 2>&1",
+    tries => 20,
+    try_sleep => 5,
+  } ->
+  exec { 'configure stats bucket':
+    command => "curl -H 'content-type: application/json' -XPUT '${riak_url}/buckets/${stats_index}/props' -d '{\"props\":{\"search_index\":\"${stats_index}\"}}'",
+    unless => "curl -s '${riak_url}/buckets/${stats_index}/props' | grep '\"search_index\":\"${stats_index}\"' > /dev/null 2>&1",
+    require => Exec['install stats index']
   }
 
 }

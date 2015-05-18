@@ -1,5 +1,6 @@
 class riakbanana::params {
-	$index = logstash_logs
+	$console_index = console_logs
+	$stats_index = stats_logs
 	$riak_host = localhost
 	$riak_port = 8098
 	$riak_url = "http://${riak_host}:${riak_port}"
